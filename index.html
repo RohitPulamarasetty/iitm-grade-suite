@@ -169,6 +169,14 @@ select:focus,input:focus{border-color:var(--amber)}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input[type=number]{-moz-appearance:textfield}
+/* ── MOBILE: prevent iOS/Android auto-zoom on focus (font-size must be >= 16px) ── */
+@media(max-width:768px){
+  select,input[type=number],input[type=text],input[type=email],input[type=search],textarea{
+    font-size:16px!important;
+  }
+  /* Eliminate 300ms tap delay and double-tap zoom on all interactive elements */
+  select,input,textarea,button,a,[role=button]{touch-action:manipulation}
+}
 /* CARD */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;backdrop-filter:blur(10px)}
 .card-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:18px;color:var(--amber);display:flex;align-items:center;gap:8px}
@@ -309,9 +317,81 @@ input.input-error{border-color:var(--red)!important;animation:shake .25s ease}
 .bonus-section-hidden{display:none!important}
 /* BONUS LABEL TEXT */
 .bonus-label-text{/* text updated by JS */}
-/* Extra-small screen body safety */
-@media(max-width:360px){
+/* ══════════════════════════════════════════════════
+   MOBILE OVERFLOW & ZOOM HARDENING
+   ══════════════════════════════════════════════════ */
+/* 1. Hard containment — only html/body, never global * */
+html,body{max-width:100%;overflow-x:hidden}
+
+/* 2. Replaced elements only — safe to constrain */
+img,svg,video,canvas,iframe{max-width:100%;height:auto}
+
+/* 3. Tables that might overflow on small screens */
+.cgpa-table-wrap,
+#cgpa-table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* 4. Container-level overflow fixes — targeted, not global */
+/* Pages */
+.page{overflow-x:hidden}
+/* Cards */
+.card,.grade-table-section,.cgpa-display,.result-panel,.pred-card{min-width:0}
+/* Flex children — allow shrink below intrinsic size */
+.nav-logo,.nav-links,.nav-btn,
+.hero-btns,.hero-btns>*,
+.flex>*,.modal-actions>*,
+.dev-links>*,.footer-links>*,
+.two-col>*,.three-col>*,
+.inputs-grid>*,.pred-grid>*,.grade-grid>*,.cgpa-stats>*{min-width:0}
+/* Button groups — wrap and don't clip */
+.hero-btns{flex-wrap:wrap}
+.modal-actions{flex-wrap:wrap}
+.dev-links{flex-wrap:wrap}
+.flex.gap-8,.flex.gap-12{flex-wrap:wrap}
+/* Action row buttons in CGPA */
+#cgpa-add-btn,
+#cgpa-clear-btn,#cgpa-export-btn,#cgpa-import-trigger-btn{min-width:0;word-break:keep-all;white-space:nowrap}
+/* Score breakdown rows */
+.breakdown-base-row,.breakdown-bonus-row,.breakdown-final-row{flex-wrap:wrap;gap:4px}
+
+/* 5. Modal never wider than viewport */
+.modal-overlay{padding:12px}
+.modal-box{max-width:min(420px,calc(100vw - 24px));width:100%}
+
+/* 6. Tooltip never escapes viewport */
+.tooltip{max-width:min(280px,calc(100vw - 32px));left:auto;right:0}
+
+/* 7. Pred-grid and inputs-grid on very narrow screens */
+@media(max-width:400px){
+  .pred-grid{grid-template-columns:1fr 1fr}
+  .inputs-grid{grid-template-columns:1fr}
   .nav-logo{font-size:.85rem;gap:7px}
+}
+
+/* 8. Hero padding shrinks on very small screens */
+@media(max-width:480px){
+  .hero{padding:36px 0 28px}
+  .cgpa-num{font-size:3rem}
+  .result-score{font-size:2.6rem}
+  .features{grid-template-columns:1fr}
+  .feature-card:hover,.dev-card:hover,.btn-primary:hover,.btn-outline:hover{transform:none}
+  .footer-links{gap:8px}
+  .footer-link{padding:6px 12px;font-size:.78rem}
+  /* Progress bar label row — allow wrapping on tiny screens */
+  .progress-bar-wrap [style*="justify-content:space-between"]{flex-wrap:wrap;gap:2px}
+}
+
+/* 9. Prevent translateY transforms from causing layout shift on mobile */
+@media(max-width:768px){
+  .btn-primary:active{transform:none;opacity:.88}
+  .btn-outline:active{transform:none;opacity:.88}
+  .footer-link:hover{transform:none}
+  .accordion-btn{-webkit-tap-highlight-color:transparent}
+  /* Ensure action rows in CGPA don't clip on 320-414px */
+  .card .flex.gap-8{row-gap:8px}
+  /* Two-col inner grids need min-width:0 too */
+  .two-col .two-col>*{min-width:0}
+  /* Table wrapper must scroll, never clip */
+  .cgpa-table{table-layout:auto}
 }
 </style>
 </head>
