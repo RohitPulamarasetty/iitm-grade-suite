@@ -1,0 +1,38 @@
+# macOS
+
+.DS_Store
+
+# Logs
+
+*.log
+
+# Environment files
+
+.env
+.env.*
+
+# VS Code
+
+.vscode/
+
+# JetBrains IDEs
+
+.idea/
+
+# Node modules (if added later)
+
+node_modules/
+
+# Build / cache
+
+dist/
+.cache/
+
+# Temporary files
+
+*.tmp
+*.temp
+
+# OS files
+
+Thumbs.db
